@@ -6,5 +6,5 @@ export const store = reactive ({
     userQuery: "",
     api_key: "5f02ec96719219fbea2b5088f31ba0ca",
     // ----------------------------
-    activeComponent: "AppHome",
+    activeComponent: "AppHome", 
 });

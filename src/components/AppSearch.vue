@@ -7,6 +7,9 @@ export default {
     data() {
         return {
             store,
+            flagFromApi: [],
+            flagFromObj: [],
+            flagImg: [],
         }
     },
 
@@ -41,10 +44,25 @@ export default {
 
                 })
         },
+        getFlagUrl(code) {
+            const flagMap = {
+                'it': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/2560px-Flag_of_Italy.svg.png',
+                'fr': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/2560px-Flag_of_France.svg.png',
+                'us': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/1280px-Flag_of_the_United_States.svg.png',
+                'zh': 'https://www.officine-vimercati.it/imgs/1109/Bandiera_ZH.jpeg?s=large',
+                'ru': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/1280px-Flag_of_Russia.svg.png',
+            };
+            return flagMap[code] || "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/1280px-Flag_of_Russia.svg.png";
+        },
         getPosterUrl(path) {
             const baseUrl = "https://image.tmdb.org/t/p/w500";
             return path ? `${baseUrl}${path}` : '';
-        }
+        },
+
+        // getImageUrl(imageName) {
+        //     return new URL(`../assets/${imageName}`, import.meta.url).href;
+        // }
+
     }
 
 
@@ -80,7 +98,21 @@ export default {
                 <h2>{{ store.myArr.length }} Risultati Generati con '{{ store.userQuery }}' .</h2>
                 <div v-for="myItem in store.myArr" class="card">
                     <img :src="getPosterUrl(myItem.poster_path)" alt="">
+                    <div class="hover">
+                        <div class="TopHover">
+                            <h2 class="headerHover">{{ myItem.original_title }}</h2>
+                        </div>
+                        <div class="bottomHover">
+                            <span>
+                                {{ myItem.vote_average }}
+                            </span>
+                                <span class="containerFlag">
+                                    <img :src="getFlagUrl(myItem.original_language)" alt="">
+                                </span>
+                        </div>
+                    </div>
                 </div>
+
 
             </div>
 
@@ -108,7 +140,7 @@ export default {
             align-items: center;
             width: 100%;
             height: 10vh;
-            background-color: #fff;
+            background-color: transparent;
 
             input {
                 width: 80%;
@@ -116,6 +148,7 @@ export default {
                 padding: 2vw;
                 font-size: 2vw;
                 color: red;
+                background-color: transparent;
                 border: .1px solid white;
             }
 
@@ -195,16 +228,86 @@ export default {
             }
 
             .card {
+                position: relative;
                 width: calc(100% / 3 - 10px);
                 height: 20vh;
                 overflow: hidden;
 
+
                 img {
+                    width: 100%;
+                    height: 100%;
                     object-fit: cover;
+
+                    &:hover {
+                        opacity: 1;
+                    }
                 }
 
+                &:hover .hover {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 1000;
+                    width: 101%;
+                    height: 101% !important;
+                    background-color: #00000086;
+
+
+                    object-fit: cover;
+
+                    .TopHover {
+                        position: absolute;
+                        top: 0;
+                        width: 100%;
+                        height: 30%;
+                        background-color: #ffffff00;
+
+                        .headerHover {
+                            border-left: 5px solid red;
+                            width: 90%;
+                            font-size: 1vw;
+                            margin: .2vw auto;
+                            background-color: #ffffff00;
+                            color: #ffffff;
+                        }
+                    }
+
+                    .bottomHover {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        position: absolute;
+                        bottom: 0;
+                        width: 100%;
+                        height: 30%;
+                        background-color: transparent;
+
+                        .containerFlag {
+                            height: 40%;
+                            width: auto;
+                            
+                            overflow: hidden;
+                            background-color: transparent;
+                            
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            }
+                        }
+
+                        span {
+                            color: white;
+                            margin: 0 1vw;
+                        }
+
+                    }
+                }
             }
         }
 
     }
-}</style>
+}
+</style>
