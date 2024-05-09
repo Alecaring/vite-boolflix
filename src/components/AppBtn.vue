@@ -1,13 +1,24 @@
 <script>
+import { store } from '../store';
 export default {
+  data() {
+    return {
+      store,
+    }
+  },
+  methods: {
+    userQuery() {
 
+      this.store.userQuery = this.store.userQuery;
+      console.log(this.store.paramsQuery);
+      console.log(this.store.myArr);
+    }
+  },
 }
 </script>
 
 <template>
-  <div>
-    <button>premi</button>
-  </div>
+  
 </template>
 
 <style lang="scss" scoped>
