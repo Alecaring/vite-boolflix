@@ -1,7 +1,12 @@
 <script>
-import { store } from '../store'
-import axios from 'axios'
+import { store } from '../store';
+import axios from 'axios';
+import AppNotification from "./AppNotification.vue";
+
 export default {
+    components: {
+        AppNotification
+    },
     data() {
         return {
             store,
@@ -20,9 +25,8 @@ export default {
                     }
                 })
                 .then((resp) => {
-                    this.store.ArrayTitleHome = resp.data.genres
-
-                })
+                    this.store.ArrayTitleHome = resp.data.genres;
+                });
         },
         sendCollectionHome() {
             axios
@@ -32,49 +36,40 @@ export default {
                     }
                 })
                 .then((resp) => {
-                    this.store.ArrayCorrispondIdHome = resp.data.results
-                    console.log(this.store.ArrayCorrispondIdHome);
-                })
+                    this.store.ArrayCorrispondIdHome = resp.data.results;
+                });
         },
         getMoviesByGenre(genreId) {
+            // Filtra i film per genere
             return this.store.ArrayCorrispondIdHome.filter(film => film.genre_ids.includes(genreId));
         },
         getPosterUrl(path) {
             const baseUrl = "https://image.tmdb.org/t/p/w500";
             return path ? `${baseUrl}${path}` : '';
-        },
-
+        }
+    },
+    computed: {
+        filteredGenres() {
+            // Mostra solo i generi che hanno almeno un film
+            return this.store.ArrayTitleHome.filter(genre => this.getMoviesByGenre(genre.id).length > 4);
+        }
     }
 }
 </script>
 
 <template>
     <div class="container">
-
         <h1 class="Int">Home</h1>
-        <div v-for="item in store.ArrayTitleHome">
+        <AppNotification />
+        <!-- Utilizza la proprietà computata `filteredGenres` per filtrare i generi -->
+        <div v-for="item in filteredGenres" :key="item.id">
             <h1>{{ item.name }}</h1>
             <div class="collection">
                 <div v-for="film in getMoviesByGenre(item.id)" :key="film.id" class="cardCollection">
-                    <img :src="getPosterUrl(film.poster_path)" alt="Poster" />
-
+                    <img :src="getPosterUrl(film.poster_path)" :alt="item.name" loading="lazy" />
                 </div>
-                <!-- <div class="cardCollection">
-    
-                </div>
-                <div class="cardCollection">
-    
-                </div>
-                <div class="cardCollection">
-    
-                </div>
-                <div class="cardCollection">
-    
-                </div> -->
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -101,29 +96,21 @@ export default {
         flex-wrap: nowrap;
         gap: 10px;
         width: 100%;
-        /* Assicurati che il contenitore abbia una larghezza definita */
-        height: 30vh;
+        height: 45vh;
         overflow-x: scroll;
-        /* Attiva lo scorrimento orizzontale */
         align-items: center;
 
         .cardCollection {
-            min-width: 30vw;
-            /* Larghezza minima per ciascun elemento */
-            height: 25vh;
+            min-width: 20vw;
+            height: 45vh;
             background-color: lightblue;
             text-align: center;
-            line-height: 30vh;
-            /* Allinea il testo verticalmente */
             overflow: hidden;
 
             img {
-                width: 30vw;
-                height: 25vh;
-                object-fit: cover;
+                width: 100%;
+                height: 100%;
             }
-
-
         }
     }
 }

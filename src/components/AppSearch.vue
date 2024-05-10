@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import { store } from '../store';
+import "@fortawesome/fontawesome-free/css/all.css";
 
 
 export default {
@@ -48,9 +49,18 @@ export default {
             const flagMap = {
                 'it': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/2560px-Flag_of_Italy.svg.png',
                 'fr': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/2560px-Flag_of_France.svg.png',
-                'us': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/1280px-Flag_of_the_United_States.svg.png',
+                'en': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/1280px-Flag_of_the_United_States.svg.png',
                 'zh': 'https://www.officine-vimercati.it/imgs/1109/Bandiera_ZH.jpeg?s=large',
                 'ru': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/1280px-Flag_of_Russia.svg.png',
+                "ja": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Flag_of_Jamaica.svg/1280px-Flag_of_Jamaica.svg.png",
+                "pt": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/2560px-Flag_of_Portugal.svg.png",
+                "ml": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/2560px-Flag_of_Malaysia.svg.png",
+                "es": "https://flagpedia.net/data/flags/w1600/es.png",
+                "no": "https://wiki.art-decor.org/images/1/1e/Flag_no.svg",
+                "vi": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/1280px-Flag_of_Vietnam.svg.png",
+                "ko": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/800px-Flag_of_South_Korea.svg.png",
+
+
             };
             return flagMap[code] || "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/1280px-Flag_of_Russia.svg.png";
         },
@@ -59,9 +69,37 @@ export default {
             return path ? `${baseUrl}${path}` : '';
         },
 
-        // getImageUrl(imageName) {
-        //     return new URL(`../assets/${imageName}`, import.meta.url).href;
-        // }
+
+
+
+        // DATI:
+        // massimo numero di stelle 5
+
+
+        // SUPPOSIZIONE:  
+
+        // ho 3 stelle piene 
+        // ho 2 stelle vuote
+        getDataByStars(data) {
+            let maxStars = 5; // massimo di stelle
+            let stars = Math.ceil(data / 2); // diventa 5 da 10
+            let fullStars = stars; // paragoniamo le stelle piene al voto del film
+            let emptyStars = maxStars - stars; // facciamo la differenza tra il massimo di stelle e i voti del film
+            return {
+                full: fullStars,
+                empty: emptyStars
+            }
+        }
+
+
+
+
+
+
+
+
+
+
 
     }
 
@@ -97,18 +135,37 @@ export default {
             <div class="containerCard">
                 <h2>{{ store.myArr.length }} Risultati Generati con '{{ store.userQuery }}' .</h2>
                 <div v-for="myItem in store.myArr" class="card">
-                    <img :src="getPosterUrl(myItem.poster_path)" alt="">
+                    <img :src="getPosterUrl(myItem.poster_path)" :alt="myItem.original_title" loading="lazy">
                     <div class="hover">
                         <div class="TopHover">
                             <h2 class="headerHover">{{ myItem.original_title }}</h2>
                         </div>
                         <div class="bottomHover">
                             <span>
-                                {{ myItem.vote_average }}
+                                {{ getDataByStars(myItem.vote_average) }}
                             </span>
-                                <span class="containerFlag">
-                                    <img :src="getFlagUrl(myItem.original_language)" alt="">
-                                </span>
+                            <span class="containerFlag">
+                                <img :src="getFlagUrl(myItem.original_language)" :alt="myItem.original_title"
+                                    loading="lazy">
+                            </span>
+
+
+
+
+
+
+                            <div class="stars">
+                                <!-- stella piena -->
+                                <i class="fa-solid fa-star"></i>
+                               
+                                <!-- stella vuota -->
+                                <i class="fa-regular fa-star"></i>
+                            </div>
+
+
+
+
+
                         </div>
                     </div>
                 </div>
@@ -122,6 +179,14 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+
+.stars {
+    background-color: transparent;
+
+    i {
+        background-color: transparent;
+    }
+}
 .container {
     position: relative;
     width: 100%;
@@ -150,6 +215,9 @@ export default {
                 color: red;
                 background-color: transparent;
                 border: .1px solid white;
+                outline: none;
+
+
             }
 
             button {
@@ -230,7 +298,7 @@ export default {
             .card {
                 position: relative;
                 width: calc(100% / 3 - 10px);
-                height: 20vh;
+                height: 40vh;
                 overflow: hidden;
 
 
@@ -287,10 +355,10 @@ export default {
                         .containerFlag {
                             height: 40%;
                             width: auto;
-                            
+
                             overflow: hidden;
                             background-color: transparent;
-                            
+
                             img {
                                 width: 100%;
                                 height: 100%;
